@@ -1,112 +1,190 @@
-const apiKey = "6124d895ac484764bae3e66622ec5915"; 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
-const searchBtn = document.getElementById("searchBtn");
-const cityInput = document.getElementById("cityInput");
-const weatherInfo = document.getElementById("weatherInfo");
-const errorMessage = document.getElementById("errorMessage");
-const cityName = document.getElementById("cityName");
-const temperature = document.getElementById("temperature");
-const humidity = document.getElementById("humidity");
-const windSpeed = document.getElementById("windSpeed");
-const description = document.getElementById("description");
-const weatherIcon = document.getElementById("weatherIcon");
-const toggleUnitBtn = document.getElementById("toggleUnit");
-const unit = document.getElementById("unit");
-const currentLocationBtn = document.getElementById("currentLocationBtn");
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
 
-let isCelsius = true;
+body {
+    background: #f9f9f9;
+    color: #333;
+}
 
-// 🔍 Search City Weather
-searchBtn.addEventListener("click", () => {
-    const city = cityInput.value.trim();
-    if (city === "") {
-        showError("Please enter a city name.");
-        return;
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    background: #26002b;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+.nav-links li {
+    margin: 0 1rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+}
+
+.nav-links a:hover {
+    background: #df42f7;
+    border-radius: 5px;
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+header {
+    height: 100vh;
+    background: url('images/travel.jpg') no-repeat center center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* About Us Section */
+#about {
+    position: relative;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: url("images/about.jpg") no-repeat center center/cover;
+}
+
+#about::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#about h2, #about p {
+    position: relative;
+    z-index: 1;
+}
+
+/* Services Section */
+#services {
+    position: relative;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: url("images/service.jpg") no-repeat center center/cover;
+}
+
+#services::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#services h2, .services-container {
+    position: relative;
+    z-index: 1;
+}
+
+.section {
+    padding: 5rem 10%;
+    text-align: center;
+}
+
+.services-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.service-box {
+    width: 30%;
+    padding: 1rem;
+    margin: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    max-width: 400px;
+    margin: auto;
+}
+
+form input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.btn {
+    padding: 10px 20px;
+    background: #df42f7;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: #26002b;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background: #26002b;
+    color: white;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .menu-toggle {
+        display: block;
     }
-    fetchWeather(city);
-});
-
-// 📍 Fetch Weather for Current Location
-currentLocationBtn.addEventListener("click", () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                fetchWeatherByCoords(position.coords.latitude, position.coords.longitude);
-            },
-            () => showError("Location access denied. Please enter a city.")
-        );
-    } else {
-        showError("Geolocation is not supported by this browser.");
+    
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        background: #26002b;
+        padding: 1rem;
     }
-});
 
-// 🌦️ Fetch Weather Data
-const fetchWeather = async (city) => {
-    try {
-        const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-        );
-        const data = await response.json();
-        
-        console.log("Weather API Response:", data); // Debugging
-
-        if (data.cod === "404") {
-            showError("City not found. Please try again.");
-            return;
-        }
-
-        displayWeather(data);
-    } catch (error) {
-        console.error("Weather API Fetch Error:", error);
-        showError("Error fetching data. Please try again later.");
+    .nav-links.active {
+        display: flex;
     }
-};
 
-// 🌍 Fetch Weather by Coordinates
-const fetchWeatherByCoords = async (lat, lon) => {
-    try {
-        const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
-        );
-        const data = await response.json();
-        console.log("Weather API Response:", data); // Debugging
-        displayWeather(data);
-    } catch (error) {
-        showError("Error fetching data.");
+    .service-box {
+        width: 90%;
     }
-};
-
-// 📌 Display Weather Data
-const displayWeather = (data) => {
-    cityName.textContent = data.name;
-    temperature.textContent = data.main.temp.toFixed(1);
-    humidity.textContent = data.main.humidity;
-    windSpeed.textContent = data.wind.speed.toFixed(1);
-    description.textContent = data.weather[0].description;
-    weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
-    weatherInfo.classList.remove("hidden");
-    errorMessage.classList.add("hidden");
-};
-
-// 🔁 Temperature Conversion Button (Fix)
-toggleUnitBtn.addEventListener("click", () => {
-    let temp = parseFloat(temperature.textContent);
-    if (isCelsius) {
-        temp = (temp * 9/5) + 32;
-        unit.textContent = "F";
-        toggleUnitBtn.textContent = "Convert to °C";
-    } else {
-        temp = (temp - 32) * 5/9;
-        unit.textContent = "C";
-        toggleUnitBtn.textContent = "Convert to °F";
-    }
-    temperature.textContent = temp.toFixed(1);
-    isCelsius = !isCelsius;
-});
-
-// 🚨 Show Error Message
-const showError = (message) => {
-    errorMessage.textContent = message;
-    errorMessage.classList.remove("hidden");
-    weatherInfo.classList.add("hidden");
-};
+}
