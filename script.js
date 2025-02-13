@@ -1,14 +1,23 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const menuToggle = document.querySelector(".menu-toggle");
-    const navLinks = document.querySelector(".nav-links");
+// Function to open modal
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = "flex";
+}
 
-    menuToggle.addEventListener("click", function () {
-        navLinks.classList.toggle("active");
-    });
+// Function to close modal
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
 
-    document.querySelectorAll(".btn").forEach(button => {
-        button.addEventListener("click", function () {
-            alert("Feature Coming Soon!");
-        });
-    });
+// Sign In Form Submission
+document.getElementById("signinForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    alert("Sign In Successful!");
+    closeModal("signinModal");
+});
+
+// Sign Up Form Submission
+document.getElementById("signupForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    alert("Sign Up Successful! Please Sign In.");
+    closeModal("signupModal");
 });
